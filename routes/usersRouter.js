@@ -1,5 +1,5 @@
 const { Router } = require('express');
-const { userController } = require('../controller');
+const { userController } = require('./../controllers');
 
 const userRouter = Router();
 
@@ -7,8 +7,8 @@ const userRouter = Router();
 
 userRouter
   .route('/')
-  .get(userController.getUsers)
-  .post(userController.createUser);
+  .post(userController.createUser)
+  .get(userController.getUsers);
 
 userRouter
   .route('/:userId')

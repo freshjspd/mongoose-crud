@@ -10,6 +10,8 @@ module.exports.createUser = async (req, res, next) => {
       return next(createHttpError(500, 'Server Error'));
     }
 
+    // console.log(createdUser.toObject());
+
     res.status(201).send({ data: createdUser });
   } catch (err) {
     next(err);

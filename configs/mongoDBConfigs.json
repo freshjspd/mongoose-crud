@@ -1,0 +1,17 @@
+{
+  "development": {
+    "host": "127.0.0.1",
+    "port": 27017,
+    "dbName": "users-dev"
+  },
+  "test": {
+    "host": "127.0.0.1",
+    "port": 27017,
+    "dbName": "users-test"
+  },
+  "production": {
+    "host": "127.0.0.1",
+    "port": 27017,
+    "dbName": "users-prod"
+  }
+}

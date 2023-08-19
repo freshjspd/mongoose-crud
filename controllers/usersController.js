@@ -7,7 +7,7 @@ module.exports.createUser = async (req, res, next) => {
   try {
     const createdUser = await User.create(body);
     if (!createdUser) {
-      return createHttpError(500, 'Server Error');
+      return next(createHttpError(500, 'Server Error'));
     }
 
     res.status(201).send({ data: createdUser });
@@ -26,6 +26,7 @@ module.exports.getUsers = async (req, res, next) => {
     const foundUsers = await User.find({}, null, {
       limit,
       skip: offset,
+      sort: { _id: 1 },
     });
 
     res.status(200).send({ data: foundUsers });
@@ -34,8 +35,56 @@ module.exports.getUsers = async (req, res, next) => {
   }
 };
 
-module.exports.getUserById = async (req, res, next) => {};
+// invalid ObjectId in userId => mongoose error
+module.exports.getUserById = async (req, res, next) => {
+  const { userId } = req.params;
 
-module.exports.updateUserById = async (req, res, next) => {};
+  try {
+    const foundUser = await User.findById(userId);
 
-module.exports.deleteUserById = async (req, res, next) => {};
+    if (!foundUser) {
+      return next(createHttpError(404, 'User Not Found'));
+    }
+    res.status(200).send({ data: foundUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.updateUserById = async (req, res, next) => {
+  const {
+    body,
+    params: { userId },
+  } = req;
+
+  try {
+    const updatedUser = await User.findByIdAndUpdate(userId, body, {
+      new: true,
+      runValidators: true,
+    });
+
+    if (!updatedUser) {
+      return next(createHttpError(404, 'User Not Found'));
+    }
+
+    res.status(200).send({ data: updatedUser });
+  } catch (err) {
+    next(err);
+  }
+};
+
+module.exports.deleteUserById = async (req, res, next) => {
+  const { userId } = req.params;
+
+  try {
+    const deletedUser = await User.findByIdAndDelete(userId);
+
+    if (!deletedUser) {
+      return next(createHttpError(404, 'User Not Found'));
+    }
+
+    res.status(204).end();
+  } catch (err) {
+    next(err);
+  }
+};
